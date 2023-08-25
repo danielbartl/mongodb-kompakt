@@ -1,0 +1,14 @@
+{
+  "_id": "Klavier",
+  "kategorie": "Instrumente",
+  "preis": NumberDecimal("3499.99"),
+  "hersteller": {
+    "name": "Yomoho",
+    "land": "Japan"
+  },
+  "schlagworte": [
+    "tasten",
+    "jazz",
+    "klassik"
+  ]
+}

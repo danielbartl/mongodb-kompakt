@@ -1,0 +1,11 @@
+{
+  "_id": "Stimmgeraet",
+  "kategorie": "Zubehoer",
+  "preis": NumberDecimal("7.95"),
+  "hersteller": {
+    "name": "Yomoho",
+    "land": "Japan"
+  },
+  "farbe": "schwarz",
+  "schlagworte": []
+}

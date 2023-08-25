@@ -1,0 +1,14 @@
+{
+  "_id": "Trompete",
+  "kategorie": "Instrumente",
+  "preis": NumberDecimal("899"),
+  "hersteller": {
+    "name": "Yomoho",
+    "land": "Japan"
+  },
+  "schlagworte": [
+    "blech",
+    "jazz",
+    "klassik"
+  ]
+}

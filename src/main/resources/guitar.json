@@ -1,0 +1,16 @@
+{
+  "_id": "Funky Guitar 5",
+  "kategorie": "Noten",
+  "preis": NumberDecimal("29.95"),
+  "seiten": 60,
+  "mitCd": true,
+  "hersteller": {
+    "name": "Huba Verlag",
+    "land": "Deutschland"
+  },
+  "schlagworte": [
+    "gitarre",
+    "funk",
+    "buch"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "_id": "Geige",
+  "kategorie": "Instrumente",
+  "preis": NumberDecimal("3000"),
+  "hersteller": {
+    "name": "Klaus",
+    "land": "Deutschland"
+  },
+  "schlagworte": [
+    "streich",
+    "klassik"
+  ]
+}

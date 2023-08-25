@@ -1,0 +1,14 @@
+{
+  "_id": "Weihnachtsliederbuch",
+  "kategorie": "Noten",
+  "preis": NumberDecimal("12.95"),
+  "seiten": 74,
+  "mitCd": false,
+  "hersteller": {
+    "name": "Huba Verlag",
+    "land": "Deutschland"
+  },
+  "schlagworte": [
+    "weihnachten"
+  ]
+}
