@@ -4,7 +4,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Projections;
 import com.mongodb.client.result.InsertOneResult;
 import org.bson.Document;
 import org.junit.jupiter.api.*;
@@ -20,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Projections.include;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         """
         Praktische Übungsaufgaben aus dem Kapitel 7 des Buches "MongoDB Kompakt"
         """)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Chapter7Tests {
 
     private static MongoDBContainer mongoDBContainer;
@@ -74,9 +75,9 @@ public class Chapter7Tests {
     @Test
     @DisplayName(
             """            
-                    7.1.1 a) Fügen Sie ein weiteres Produkt Ihrer Wahl ein.
-                    Halten Sie sich grob an das Schema der bisherigen Produkte.
-                    """)
+            7.1.1 a) Fügen Sie ein weiteres Produkt Ihrer Wahl ein.
+            Halten Sie sich grob an das Schema der bisherigen Produkte.
+            """)
     @Order(7111)
     public void testInsertingAdditionalProduct() {
 
@@ -106,9 +107,9 @@ public class Chapter7Tests {
     @Test
     @DisplayName(
             """
-                    7.1.1 b) Geben Sie alle Produkte des Herstellers "Yomoho" aus,
-                    die mehr als 100 EUR kosten.
-                    """)
+            7.1.1 b) Geben Sie alle Produkte des Herstellers "Yomoho" aus,
+            die mehr als 100 EUR kosten.
+            """)
     @Order(7112)
     void testFindingAllProductsOfYomohoHavingPriceAbove100EUR() {
 
@@ -135,9 +136,9 @@ public class Chapter7Tests {
     @Test
     @DisplayName(
             """
-                    7.1.1 c) Welche Produkte sind in der Kategorie "Zubehoer" oder "Noten"?
-                    Geben Sie nur deren _id aus.
-                    """)
+            7.1.1 c) Welche Produkte sind in der Kategorie "Zubehoer" oder "Noten"?
+            Geben Sie nur deren _id aus.
+            """)
     @Order(7113)
     void testFindingProductsOfZubehoerOrNotenCategory() {
 
@@ -149,12 +150,31 @@ public class Chapter7Tests {
                 products
                         .find(
                                 or(eq("kategorie", "Zubehoer"), eq("kategorie", "Noten")))
-                        .projection(Projections.include("_id"))
+                        .projection(include("_id"))
                         .into(new ArrayList<>());
 
         // then
         Assertions.assertEquals(3, list.size());
         list.forEach(d -> assertTrue(List.of("Weihnachtsliederbuch", "Stimmgeraet", "Funky Guitar 5").contains(d.getString("_id"))));
+
+    }
+
+    @Test
+    @DisplayName(
+            """
+            7.1.1 d) Wie viele Produkte haben das Schlagword "jazz"?
+            """)
+    @Order(7114)
+    void testFindingHowManyProductsHaveSchlagwordJazz() {
+
+        // given
+        assertEquals(6, products.countDocuments());
+
+        // when
+        final long result = products.countDocuments(eq("schlagworte", "jazz"));
+
+        // then
+        assertEquals(2, result);
 
     }
 
