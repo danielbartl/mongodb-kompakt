@@ -4,6 +4,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Projections;
 import com.mongodb.client.result.InsertOneResult;
 import org.bson.Document;
 import org.junit.jupiter.api.*;
@@ -73,10 +74,10 @@ public class Chapter7Tests {
     @Test
     @DisplayName(
             """            
-            7.1.1 a) Fügen Sie ein weiteres Produkt Ihrer Wahl ein.
-            Halten Sie sich grob an das Schema der bisherigen Produkte.
-            """)
-    @Order(711)
+                    7.1.1 a) Fügen Sie ein weiteres Produkt Ihrer Wahl ein.
+                    Halten Sie sich grob an das Schema der bisherigen Produkte.
+                    """)
+    @Order(7111)
     public void testInsertingAdditionalProduct() {
 
         // given
@@ -105,10 +106,10 @@ public class Chapter7Tests {
     @Test
     @DisplayName(
             """
-            7.1.1 b) Geben Sie alle Produkte des Herstellers "Yomoho" aus,
-            die mehr als 100 EUR kosten.
-            """)
-    @Order(712)
+                    7.1.1 b) Geben Sie alle Produkte des Herstellers "Yomoho" aus,
+                    die mehr als 100 EUR kosten.
+                    """)
+    @Order(7112)
     void testFindingAllProductsOfYomohoHavingPriceAbove100EUR() {
 
         // given
@@ -124,10 +125,36 @@ public class Chapter7Tests {
                 );
         final List<Document> list = result.into(new ArrayList<>());
 
-        //then
+        // then
         assertEquals(2, list.size());
         list.forEach(d -> assertTrue(List.of("Klavier", "Trompete").contains(d.getString("_id"))));
 
+
+    }
+
+    @Test
+    @DisplayName(
+            """
+                    7.1.1 c) Welche Produkte sind in der Kategorie "Zubehoer" oder "Noten"?
+                    Geben Sie nur deren _id aus.
+                    """)
+    @Order(7113)
+    void testFindingProductsOfZubehoerOrNotenCategory() {
+
+        // given
+        assertEquals(6, products.countDocuments());
+
+        // when
+        final var list =
+                products
+                        .find(
+                                or(eq("kategorie", "Zubehoer"), eq("kategorie", "Noten")))
+                        .projection(Projections.include("_id"))
+                        .into(new ArrayList<>());
+
+        // then
+        Assertions.assertEquals(3, list.size());
+        list.forEach(d -> assertTrue(List.of("Weihnachtsliederbuch", "Stimmgeraet", "Funky Guitar 5").contains(d.getString("_id"))));
 
     }
 
