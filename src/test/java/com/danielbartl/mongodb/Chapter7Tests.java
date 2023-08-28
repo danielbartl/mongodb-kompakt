@@ -4,9 +4,10 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
+import org.bson.types.Decimal128;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
@@ -21,6 +22,8 @@ import java.util.List;
 
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Projections.include;
+import static com.mongodb.client.model.Sorts.descending;
+import static com.mongodb.client.model.Updates.set;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -192,12 +195,38 @@ public class Chapter7Tests {
 
         // when
         final var list =
-                products.find().sort(Sorts.descending("preis")).limit(2).into(new ArrayList<>());
+                products.find().sort(descending("preis")).limit(2).into(new ArrayList<>());
 
         // then
         assertEquals(2, list.size());
         assertEquals("Klavier", list.get(0).getString("_id"));
         assertEquals("Geige", list.get(1).getString("_id"));
+
+    }
+
+    @Test
+    @DisplayName(
+            """
+            7.1.1 f) Ändern Sie den Preis des Produkts "Klavier" auf 3800.
+            """
+    )
+    @Order(7116)
+    void testUpdatingThePriceForKlavierTo3800EUR() {
+
+        // given
+        assertEquals(6, products.countDocuments());
+
+        // when
+        final UpdateResult updateResult =
+                products.updateOne(eq("_id", "Klavier"), set("preis", new BigDecimal(3800)));
+
+        // then
+        assertEquals(1, updateResult.getMatchedCount());
+        assertEquals(1, updateResult.getModifiedCount());
+
+        final var list = products.find(eq("_id", "Klavier")).into(new ArrayList<>());
+        assertEquals(1, list.size());
+        assertEquals(Decimal128.parse("3800"), list.get(0).get("preis", Decimal128.class));
 
     }
 
