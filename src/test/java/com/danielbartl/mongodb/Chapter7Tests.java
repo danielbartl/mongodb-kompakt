@@ -4,6 +4,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.InsertOneResult;
 import org.bson.Document;
 import org.junit.jupiter.api.*;
@@ -154,7 +155,7 @@ public class Chapter7Tests {
                         .into(new ArrayList<>());
 
         // then
-        Assertions.assertEquals(3, list.size());
+        assertEquals(3, list.size());
         list.forEach(d -> assertTrue(List.of("Weihnachtsliederbuch", "Stimmgeraet", "Funky Guitar 5").contains(d.getString("_id"))));
 
     }
@@ -175,6 +176,28 @@ public class Chapter7Tests {
 
         // then
         assertEquals(2, result);
+
+    }
+
+    @Test
+    @DisplayName(
+            """
+            7.1.1 e) Was sind die zwei teuersten Produkte?
+            """)
+    @Order(7115)
+    void testFindTheTwoMostExpensiveProducts() {
+
+        // given
+        assertEquals(6, products.countDocuments());
+
+        // when
+        final var list =
+                products.find().sort(Sorts.descending("preis")).limit(2).into(new ArrayList<>());
+
+        // then
+        assertEquals(2, list.size());
+        assertEquals("Klavier", list.get(0).getString("_id"));
+        assertEquals("Geige", list.get(1).getString("_id"));
 
     }
 
