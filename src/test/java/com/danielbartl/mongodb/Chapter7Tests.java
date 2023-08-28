@@ -23,10 +23,10 @@ import java.util.List;
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Projections.include;
 import static com.mongodb.client.model.Sorts.descending;
+import static com.mongodb.client.model.Updates.addToSet;
 import static com.mongodb.client.model.Updates.set;
 import static java.util.Objects.requireNonNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName(
         """
@@ -227,6 +227,44 @@ public class Chapter7Tests {
         final var list = products.find(eq("_id", "Klavier")).into(new ArrayList<>());
         assertEquals(1, list.size());
         assertEquals(Decimal128.parse("3800"), list.get(0).get("preis", Decimal128.class));
+
+    }
+
+    @Test
+    @DisplayName(
+            """
+            7.1.1 g) Fügen Sie allen Produkten, für die eine Seitenzahl angegeben wurde,
+            das Schlagwort "buch" hinzu. Achten Sie darauf, dass danach kein Artikel dieses
+            Schlagwort zweimal hat.
+            """
+    )
+    @Order(7117)
+    void testInsertingASchlagwortBuchForAllProductsWithSeitenzahl() {
+
+        // given
+        assertEquals(6, products.countDocuments());
+
+        // when
+        final UpdateResult updateResult =
+                products.updateMany(exists("seiten"), addToSet("schlagworte", "buch"));
+
+        // then
+        assertEquals(2, updateResult.getMatchedCount());
+        assertEquals(1, updateResult.getModifiedCount());
+
+        final var books =
+                products.find(eq("schlagworte", "buch")).into(new ArrayList<>());
+        assertEquals(2, books.size());
+
+        assertNotNull(books.get(0).getInteger("seiten"));
+        final var schlagworte0 = books.get(0).getList("schlagworte", String.class);
+        assertTrue(schlagworte0.contains("buch"));
+        assertEquals(schlagworte0.indexOf("buch"), schlagworte0.lastIndexOf("buch"));
+
+        assertNotNull(books.get(1).getInteger("seiten"));
+        final var schlagworte1 = books.get(1).getList("schlagworte", String.class);
+        assertTrue(schlagworte1.contains("buch"));
+        assertEquals(schlagworte1.indexOf("buch"), schlagworte1.lastIndexOf("buch"));
 
     }
 
